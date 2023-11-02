@@ -34,12 +34,36 @@ void main() {
       expect(bookService.getBooks().length, 2);
     });
 
+    test('addBookAsync', () async {
+      await bookService.addBookAsync(book1);
+      var addBookAction = bookService.addBookAsync(book2);
+      // Should still ony have one book because the Future hasn't completed yet
+      expect(bookService.getBooks().length, 1);
+      await addBookAction;
+      // Now that the Future has completed, we should have two books
+      expect(bookService.getBooks().length, 2);
+    });
+
     test('removeBook', () {
       BookService bookService = BookService();
       bookService.addBook(book1);
       bookService.addBook(book2);
       expect(bookService.removeBook(book1), true);
       expect(bookService.getBooks().length, 1);
+    });
+
+    test("removeBookAsync", () async {
+      BookService bookService = BookService();
+      bookService.addBook(book1);
+      bookService.addBook(book2);
+      bookService.addBook(book3);
+      var removeBook2Action = bookService.removeBookAsync(book2);
+      // Should still have three books because the Future hasn't completed yet
+      expect(bookService.getBooks().length, 3);
+      var deleted = await removeBook2Action;
+      expect(deleted, true);
+      // Now that the Future has completed, we should have two books
+      expect(bookService.getBooks().length, 2);
     });
 
     test('addMultipleBooks', () {
